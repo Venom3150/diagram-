@@ -1,41 +1,42 @@
 
 ```mermaid
 flowchart LR
-  C[Client (Swagger or HTML)]
+  C[Client Swagger or HTML]
   API[FastAPI API]
   SAN[Sanitize email]
   RED[Redact PII]
-  TRIAGE[ChatGPT Parse/Triage -> ParsedIntent]
-  RET[Embeddings + FAISS search]
-  RULES[Rules: prereqs, credits, modality, term]
-  RERANK[ChatGPT Rerank + citations]
-  HANDLERS[Handlers: meeting, rec letter, hold, forms]
-  DRAFT[ChatGPT Draft <= 250 words + 1 question]
-  HIL[Human review (approve/edit)]
-  RESP[JSON response: summary, recs, draft, intent]
-  CAT[(catalog.json)]
-  CFG[(config.yaml / .env)]
-  LOG[(Non-PII logs & metrics)]
+  TRIAGE[ChatGPT Parse and Triage to ParsedIntent]
+  RET[Embeddings and FAISS search]
+  RULES[Rules prereqs credits modality term]
+  RERANK[ChatGPT Rerank with citations]
+  HANDLERS[Handlers meeting rec letter hold forms]
+  DRAFT[ChatGPT Draft max 250 words plus 1 question]
+  HIL[Human review approve or edit]
+  RESP[JSON response summary recs draft intent]
+  CAT[(catalog json)]
+  CFG[(config env)]
+  LOG[(Non PII logs and metrics)]
 
-  C -->|POST /advise| API
+  C --> API
   API --> SAN
   SAN --> RED
   RED --> TRIAGE
-  TRIAGE -->|topic = advising| RET
+  TRIAGE --> RET
   RET --> RULES
   RULES --> RERANK
   RERANK --> DRAFT
-  TRIAGE -->|topic != advising| HANDLERS
+  TRIAGE --> HANDLERS
   HANDLERS --> DRAFT
   DRAFT --> HIL
   HIL --> RESP
   RESP --> C
 
-  subgraph Data_Config [Data & Config]
+  subgraph Data_Config [Data and Config]
     CAT --> RET
     CFG --> API
     API --> LOG
   end
+
 
 
 
